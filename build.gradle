@@ -1,0 +1,36 @@
+apply plugin: 'java'
+apply plugin: 'jacoco'
+
+sourceSets.main.java.srcDirs = ['src']
+sourceSets.test.java.srcDirs = ['test']
+
+dependencies {
+  testCompile group: 'junit', name: 'junit', version: "4.+"
+}
+
+repositories {
+  mavenCentral()
+}
+
+jacocoTestReport {
+    doFirst{
+        classDirectories = fileTree(
+          dir: './build/classes/main/com/suhuitan',
+          excludes: ['**/ui/*.class']
+        )
+    }
+
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "build/reports/coverageHtml"
+    }
+}
+
+task(runui, dependsOn: 'classes', type: JavaExec) {
+  
+  main = 'com.suhuitan.ui.RPSLSFrame'
+  classpath = sourceSets.main.runtimeClasspath
+}
+
+defaultTasks 'clean', 'test', 'jacocoTestReport', 'runui'
